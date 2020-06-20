@@ -1,0 +1,54 @@
+import { MongoRepository } from 'typeorm';
+import { EmailConfigEntity } from '../../model/mongoEntity/emailConfig.entity';
+import { TaskEntity } from '../../model/mongoEntity/task.entity';
+import { CancleEmailTaskDto } from '../../model/DTO/task/CancleEmailTaskDto';
+import { CreateEmailTaskDto } from '../../model/DTO/task/CreateEmailTaskDto';
+import { Queue } from 'bull';
+import { TaskGetDto } from '../../model/DTO/task/TaskGetDto';
+import { MessageConfigEntity } from '../../model/mongoEntity/messageConfig.entity';
+import { AppTaskConfig } from '../../model/DTO/task/AppTaskConfig';
+import { TaskLogService } from './taskLog.service';
+import { UniqueKey } from '../../model/DTO/config/UniqueKey';
+import { MessageGetDto } from '../../model/DTO/config/MessageGetDto';
+import { CreateMessageConfigDto } from '../../model/DTO/config/CreateMessageConfigDto';
+import { CreateEmailConfigDto } from '../../model/DTO/config/CreateEmailConfigDto';
+import { EmailGetDto } from '../../model/DTO/config/EmailGetDto';
+export declare class TaskService {
+    private readonly emailNoticeQueue;
+    private readonly messageNoticeQueue;
+    private readonly taskLogService;
+    private readonly taskEntityRepository;
+    private readonly emailConfigEntityRepository;
+    private readonly messageConfigEntityRepository;
+    appTaskConfig: AppTaskConfig;
+    constructor(emailNoticeQueue: Queue, messageNoticeQueue: Queue, taskLogService: TaskLogService, taskEntityRepository: MongoRepository<TaskEntity>, emailConfigEntityRepository: MongoRepository<EmailConfigEntity>, messageConfigEntityRepository: MongoRepository<MessageConfigEntity>);
+    cancleEmailTask(params: CancleEmailTaskDto): Promise<import("typeorm").UpdateWriteOpResult>;
+    addEmailTask(params: CreateEmailTaskDto): Promise<void>;
+    addMessageTask(params: CreateEmailTaskDto): Promise<void>;
+    buildTaskLog(params: CreateEmailTaskDto, taskType: number, config: any): TaskEntity;
+    private getPredictDealTime;
+    private makeTaskCode;
+    getTaskInfo(id: string): Promise<TaskEntity>;
+    updateTask(id: string, task: TaskEntity): Promise<boolean>;
+    getNextTimeValue(timeType: string, timeValue: string, isDelay: number): number;
+    taskList(params: TaskGetDto): Promise<[TaskEntity[], number]>;
+    deleteTask(params: string): Promise<import("typeorm").DeleteWriteOpResultObject>;
+    canSubmit(): Promise<boolean>;
+    getAllMessageConfig(params: MessageGetDto, user: any): Promise<{
+        data: MessageConfigEntity[];
+        count: number;
+    }>;
+    delMessageConfig(params: Array<number | string>): Promise<import("typeorm").DeleteWriteOpResultObject>;
+    editMessageConfig(params: CreateMessageConfigDto): Promise<import("typeorm").UpdateWriteOpResult>;
+    addMessageConfig(params: CreateMessageConfigDto): Promise<import("typeorm").InsertOneWriteOpResult>;
+    getAllEmailConfig(params: EmailGetDto, user: any): Promise<{
+        data: EmailConfigEntity[];
+        count: number;
+    }>;
+    delEmailConfig(params: Array<number | string>): Promise<import("typeorm").DeleteWriteOpResultObject>;
+    editEmailConfig(params: CreateEmailConfigDto): Promise<import("typeorm").UpdateWriteOpResult>;
+    addEmailConfig(params: CreateEmailConfigDto): Promise<import("typeorm").InsertOneWriteOpResult>;
+    getEmailConfigInfo(taskConfig: string): Promise<EmailConfigEntity>;
+    getMessageConfigInfo(taskConfig: string): Promise<MessageConfigEntity>;
+    uniqueName(params: UniqueKey): Promise<boolean>;
+}
