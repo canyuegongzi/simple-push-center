@@ -31,7 +31,7 @@
         "url": "127.0.0.1"
     },
     "emailConfig":{
-        "authPass": "",
+        "authPass": "454545",
         "fromUser": "<1970305447@qq.com>",
         "user": "1970305447@qq.com"
     }
