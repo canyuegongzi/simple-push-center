@@ -10,7 +10,7 @@ export class UtilService {
      */
     public getUser(token) {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, '', (error: any, decoded: any) => {
+            jwt.verify(token, 'marvin', (error: any, decoded: any) => {
                 if (error) {
                     reject('用户无效');
                 } else {
@@ -24,7 +24,7 @@ export class UtilService {
     /**
      * 解析app应用信息
      */
-    public formatAppKey(key: string, secret = '') {
+    public formatAppKey(key: string, secret = 'marvin-app-key-notice-platform') {
         return new Promise((resolve, reject) => {
             jwt.verify(key, secret, (error: any, decoded: any) => {
                 if (error) {

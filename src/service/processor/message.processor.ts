@@ -5,6 +5,8 @@ import {TaskLogService} from '../service/taskLog.service';
 import {TaskEntity} from '../../model/mongoEntity/task.entity';
 import {TaskService} from '../service/task.service';
 import moment = require('moment');
+
+moment.locale('zh-cn')
 import {TaskEmitMessageService} from '../service/taskEmitMessage.service';
 import {MessageConfigEntity} from '../../model/mongoEntity/messageConfig.entity';
 
@@ -23,7 +25,7 @@ export class MessageEmailProcessor {
     public async handleTranscode(job: Job) {
         let task: TaskEntity;
         let messageConfig: MessageConfigEntity;
-        let errmessage: string = '';
+        let errmessage = '';
         let status: number;
         let transport;
         let sendResult = null;
@@ -72,7 +74,7 @@ export class MessageEmailProcessor {
             let newTask: TaskEntity;
             if (executeType === 2) {
                 nextTime = this.taskService.getNextTimeValue(task.timeType, task.timeValue, 1);
-                delayValue = nextTime - new Date().getTime();
+                delayValue = nextTime - moment().valueOf();
                 newTask = {...task, executeCount: task.executeCount + 1, predictDealTime: nextTime, status, endTime: moment().valueOf()};
             } else {
                 newTask = {...task, executeCount: task.executeCount + 1, status, endTime: moment().valueOf()};

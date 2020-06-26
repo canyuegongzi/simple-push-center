@@ -9,6 +9,8 @@ import {RedisCacheService} from './redisCache.service';
 import * as nodemailer from 'nodemailer';
 import {emailConfig} from '../../config/config.json';
 import moment = require('moment');
+
+moment.locale('zh-cn')
 import {JwtAppKeyToken} from '../../model/types/JwtAppKeyToken';
 import {CreateAppKeyDto} from '../../model/DTO/appKey/CreateAppKeyDto';
 import {AppKeyGetDto} from '../../model/DTO/appKey/AppKeyGetDto';

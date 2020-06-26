@@ -8,6 +8,7 @@ import {CreateEmailTaskDto} from '../../model/DTO/task/CreateEmailTaskDto';
 import {InjectQueue, Process, Processor} from '@nestjs/bull';
 import {Job, Queue} from 'bull';
 import moment = require('moment');
+moment.locale('zh-cn')
 import fnv = require('fnv-plus');
 import {ApiException} from '../../common/error/exceptions/api.exception';
 import {ApiErrorCode} from '../../config/api-error-code.enum';
@@ -73,7 +74,7 @@ export class TaskService {
             const config: EmailConfigEntity = await this.getEmailConfigInfo(params.taskConfig);
             const task: any = this.buildTaskLog(params, 1, config);
             const taskResult = await this.taskEntityRepository.insertOne( task);
-            const delayValue: number = task.predictDealTime - new Date().getTime();
+            const delayValue: number = task.predictDealTime - moment().valueOf();
             if (task.isDelay === '0') {
                 await this.emailNoticeQueue.add('emitEmail', {
                     id: taskResult.insertedId,
@@ -100,7 +101,7 @@ export class TaskService {
             const config: MessageConfigEntity = await this.getMessageConfigInfo(params.taskConfig);
             const task: any = this.buildTaskLog(params, 2, config);
             const taskResult = await this.taskEntityRepository.insertOne( task);
-            const delayValue: number = task.predictDealTime - new Date().getTime();
+            const delayValue: number = task.predictDealTime - moment().valueOf();
             if (task.isDelay === '0') {
                 await this.messageNoticeQueue.add('emitMessage', {
                     id: taskResult.insertedId,
@@ -134,7 +135,7 @@ export class TaskService {
             executeType: params.executeType,
             executeCount: 0,
             isDelay: params.isDelay,
-            startTime: new Date().getTime(),
+            startTime: moment().valueOf(),
             predictDealTime: this.getPredictDealTime(Number(params.isDelay), params),
             endTime: null,
             from: config.authUser || '云平台',
@@ -158,7 +159,7 @@ export class TaskService {
             return moment().valueOf();
         }
         if ((isDelay === 1 && executeType === 1)) {
-            return moment(params.predictDealTime).valueOf();
+            return Number(params.predictDealTime);
         }
         if (executeType === 2) {
             const value = this.getNextTimeValue(params.timeType, params.timeValue, 1);
@@ -171,7 +172,7 @@ export class TaskService {
      * 任务编号
      */
     private makeTaskCode(params: CreateEmailTaskDto) {
-        const value = `${new Date().getTime()}${params.operateUser}`;
+        const value = `${moment().valueOf()}${params.operateUser}`;
         const hash = fnv.hash(value, 16).str();
         return hash;
     }

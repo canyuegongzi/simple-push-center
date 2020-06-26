@@ -12,6 +12,8 @@ import {CreateMessageConfigDto} from '../model/DTO/config/CreateMessageConfigDto
 import {MessageGetDto} from '../model/DTO/config/MessageGetDto';
 import {UniqueKey} from '../model/DTO/config/UniqueKey';
 import {GetDefaultDto} from "../model/DTO/config/GetDefaultDto";
+import moment = require("moment");
+moment.locale('zh-cn')
 
 @Controller('task')
 export class TaskController {
@@ -120,7 +122,7 @@ export class TaskController {
     public async authApp(@Body('key') key: string, @Body('expiresTime') expiresTime: string, @Body('name') name: string) {
         try {
             const appInfo: any = await this.utilService.formatAppKey(key);
-            const flag: boolean = new Date(appInfo.overdueTime).getTime() > new Date().getTime()
+            const flag: boolean = moment(appInfo.overdueTime).valueOf() > moment().valueOf()
             return flag;
         } catch (e) {
             return  { code: 200, message: e.errorMessage, success: false };
