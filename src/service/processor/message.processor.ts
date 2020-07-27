@@ -1,5 +1,5 @@
 import {InjectQueue, Process, Processor} from '@nestjs/bull';
-import {forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
+import { Inject, Injectable} from '@nestjs/common';
 import {Job, Queue} from 'bull';
 import {TaskLogService} from '../service/taskLog.service';
 import {TaskEntity} from '../../model/mongoEntity/task.entity';
@@ -9,17 +9,23 @@ import moment = require('moment');
 moment.locale('zh-cn')
 import {TaskEmitMessageService} from '../service/taskEmitMessage.service';
 import {MessageConfigEntity} from '../../model/mongoEntity/messageConfig.entity';
+import {Emitter, NestEventEmitter} from "nest-event";
+import {EventEmitter} from "events";
 
 @Injectable()
 @Processor('message')
-export class MessageEmailProcessor {
+@Emitter('task-log-emitter')
+export class MessageEmailProcessor extends EventEmitter {
     constructor(
         @InjectQueue('message') private readonly messageNoticeQueue: Queue,
         private readonly taskLogService: TaskLogService,
         private readonly taskEmitMessageService: TaskEmitMessageService,
         @Inject(TaskService)
         private readonly taskService: TaskService,
-    ) {}
+        private readonly nestEventEmitter: NestEventEmitter,
+    ) {
+        super()
+    }
 
     @Process('emitMessage')
     public async handleTranscode(job: Job) {
@@ -34,14 +40,14 @@ export class MessageEmailProcessor {
             task = await this.taskService.getTaskInfo(job.data.id);
             messageConfig = await this.taskService.getMessageConfigInfo(task.taskConfig);
             if (task.executeCount >= task.maxExecuteCount || (Number(task.executeType) === 1 && Number(task.status) === 2) || (Number(task.executeType) === 2 && Number(task.status) >= 2)) { return; }
+            try {
+                transport = await this.taskEmitMessageService.createTransport({accessKeyId: messageConfig.accessKeyId, secretAccessKey: messageConfig.secretAccessKey});
+            } catch (e) {
+                errmessage = '传输器构建失败';
+            }
         } catch (e) {
             status = 3;
             errmessage = '任务查询失败或获取配置失败';
-        }
-        try {
-            transport = await this.taskEmitMessageService.createTransport({accessKeyId: messageConfig.accessKeyId, secretAccessKey: messageConfig.secretAccessKey});
-        } catch (e) {
-            errmessage = '传输器构建失败';
         }
         try {
             const {response, isSuccess} =  await this.taskEmitMessageService.sendMessage({PhoneNumbers: task.to, SignName: messageConfig.signName, TemplateCode: messageConfig.templateCode, TemplateParam: task.content}, transport);
@@ -60,7 +66,7 @@ export class MessageEmailProcessor {
         } catch (e) {
             errmessage = '短信发送失败';
         }
-        await this.taskLogService.addTaskLog({isSuccess: isSuccessFlag, taskCode: task.taskCode, logging: sendResult, content: task.content, from: task.from, to: task.to, errmessage, endTime: moment().valueOf(), taskId: task.id });
+        this.nestEventEmitter.emitter('task-log-emitter').emit('record-task-log', {isSuccess: isSuccessFlag, taskCode: task.taskCode, logging: sendResult, content: task.content, from: task.from, to: task.to, errmessage, endTime: moment().valueOf(), taskId: task.id });
     }
 
     /**

@@ -9,6 +9,7 @@ import { ApiParamsValidationPipe } from './common/error/pipe/api-params-validati
 import { config } from './config/config.json';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   app.use(session({
     secret :  'secret', // 对session id 相关的cookie 进行签名
     resave : true,
@@ -19,8 +20,8 @@ async function bootstrap() {
   }));
   // 允许跨域
   app.enableCors();
-  app.useStaticAssets(join(__dirname, '.', 'public'), { prefix: '/public/' });
-  app.setBaseViewsDir(join(__dirname, '.', 'views'));
+  app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/public/' });
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ApiParamsValidationPipe());
@@ -28,3 +29,6 @@ async function bootstrap() {
   await app.listen(config.port);
 }
 bootstrap();
+
+// pm2 start dist/main.js -i 1 -name pushapi
+// docker cp /home/ubuntu/api/simple-notice-center/src e1b7eb2b0177:/server/simple-notice-center

@@ -10,6 +10,8 @@ import {TaskLogEntity} from './model/mongoEntity/taskLog.entity';
 import {AppKeyModule} from './module/appKey.module';
 import {TaskModule} from './module/task.module';
 import {SystemConfigEntity} from "./model/mongoEntity/systemConfig.entity";
+import {EventModule} from "./module/event.module";
+import {HelpModule} from "./module/help.module";
 
 @Module({
     imports: [
@@ -29,8 +31,11 @@ import {SystemConfigEntity} from "./model/mongoEntity/systemConfig.entity";
                 entities: [AppKeyEntity, EmailConfigEntity, SystemConfigEntity, MessageConfigEntity, TaskEntity, TaskLogEntity],
             },
         ),
+        EventModule,
         TaskModule,
-        AppKeyModule],
+        AppKeyModule,
+        HelpModule
+    ],
     controllers: [],
     providers: [],
 })

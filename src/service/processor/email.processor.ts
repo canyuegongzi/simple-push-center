@@ -1,5 +1,5 @@
 import {InjectQueue, Process, Processor} from '@nestjs/bull';
-import {forwardRef, Inject, Injectable, Logger} from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import {Job, Queue} from 'bull';
 import {RedisCacheService} from '../service/redisCache.service';
 import {TaskEmitEmailService} from '../service/taskEmitEmail.service';
@@ -9,18 +9,22 @@ import {TaskService} from '../service/task.service';
 import moment = require('moment');
 moment.locale('zh-cn')
 import {EmailConfigEntity} from '../../model/mongoEntity/emailConfig.entity';
+import {Emitter, NestEventEmitter} from "nest-event";
+import {EventEmitter} from "events";
 
 @Injectable()
 @Processor('email')
-export class NoticeEmailProcessor {
+@Emitter('task-log-emitter')
+export class NoticeEmailProcessor  extends EventEmitter {
     constructor(
         @InjectQueue('email') private readonly emailNoticeQueue: Queue,
-        private readonly redisCacheService: RedisCacheService,
-        private readonly taskLogService: TaskLogService,
         private readonly taskEmitEmailService: TaskEmitEmailService,
         @Inject(TaskService)
         private readonly taskService: TaskService,
-    ) {}
+        private readonly nestEventEmitter: NestEventEmitter,
+    ) {
+        super()
+    }
 
     @Process('emitEmail')
     public async handleTranscode(job: Job) {
@@ -35,19 +39,19 @@ export class NoticeEmailProcessor {
             task = await this.taskService.getTaskInfo(job.data.id);
             emailConfig = await this.taskService.getEmailConfigInfo(task.taskConfig);
             if (task.executeCount >= task.maxExecuteCount || (Number(task.executeType) === 1 && Number(task.status) === 2) || (Number(task.executeType) === 2 && Number(task.status) >= 2)) { return; }
+            try {
+                transport = await this.taskEmitEmailService.createTransport({
+                    port: emailConfig.port,
+                    host: emailConfig.host && emailConfig.host !== '--' ? emailConfig.host : '',
+                    secureConnection: false,
+                    service: emailConfig.service,
+                    auth: {user: emailConfig.authUser, pass: emailConfig.authPass}});
+            } catch (e) {
+                errmessage = '传输器构建失败';
+            }
         } catch (e) {
             status = 3;
             errmessage = '任务查询失败或获取配置失败';
-        }
-        try {
-            transport = await this.taskEmitEmailService.createTransport({
-                port: emailConfig.port,
-                host: emailConfig.host && emailConfig.host !== '--' ? emailConfig.host : '',
-                secureConnection: false,
-                service: emailConfig.service,
-                auth: {user: emailConfig.authUser, pass: emailConfig.authPass}});
-        } catch (e) {
-            errmessage = '传输器构建失败';
         }
         try {
             const {response, isSuccess} = await this.taskEmitEmailService.sendMailer({to: task.to, from: emailConfig.authUser, subject: task.title, html: task.content}, transport);
@@ -66,7 +70,7 @@ export class NoticeEmailProcessor {
         } catch (e) {
             errmessage = '邮件发送失败';
         }
-        await this.taskLogService.addTaskLog({isSuccess: isSuccessFlag, taskCode: task.taskCode, logging: sendResult, content: task.content, from: task.from, to: task.to, errmessage, endTime: moment().valueOf(), taskId: task.id });
+        this.nestEventEmitter.emitter('task-log-emitter').emit('record-task-log', {isSuccess: isSuccessFlag, taskCode: task.taskCode, logging: sendResult, content: task.content, from: task.from, to: task.to, errmessage, endTime: moment().valueOf(), taskId: task.id });
     }
 
     /**

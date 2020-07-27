@@ -17,13 +17,12 @@ import {MessageConfigEntity} from '../../model/mongoEntity/messageConfig.entity'
 import {AppTaskConfig} from '../../model/DTO/task/AppTaskConfig';
 import {TaskLogService} from './taskLog.service';
 import {UniqueKey} from '../../model/DTO/config/UniqueKey';
-import {MessageGetDto} from '../../model/DTO/config/MessageGetDto';
-import {CreateMessageConfigDto} from '../../model/DTO/config/CreateMessageConfigDto';
-import {CreateEmailConfigDto} from '../../model/DTO/config/CreateEmailConfigDto';
-import {EmailGetDto} from '../../model/DTO/config/EmailGetDto';
 import {UtilService} from "./util.service";
 import { SystemConfigEntity } from 'src/model/mongoEntity/systemConfig.entity';
 import {RedisCacheService} from "./redisCache.service";
+import {From, On} from "nest-event";
+import {TaskLogEntity} from "../../model/mongoEntity/taskLog.entity";
+import {KafkaTaskDto} from "../../model/DTO/kafka/KafkaTaskDto";
 
 @Injectable()
 export class TaskService {
@@ -37,13 +36,13 @@ export class TaskService {
         @InjectQueue('email') private readonly emailNoticeQueue: Queue,
         @InjectQueue('message') private readonly messageNoticeQueue: Queue,
         private readonly taskLogService: TaskLogService,
-        @Inject(UtilService) private readonly utilService: UtilService,
-        @Inject(RedisCacheService) private readonly redisCacheService: RedisCacheService,
+        private readonly utilService: UtilService,
+        private readonly redisCacheService: RedisCacheService,
         @InjectRepository(TaskEntity) private readonly taskEntityRepository: MongoRepository<TaskEntity>,
         @InjectRepository(EmailConfigEntity) private readonly emailConfigEntityRepository: MongoRepository<EmailConfigEntity>,
         @InjectRepository(MessageConfigEntity) private readonly messageConfigEntityRepository: MongoRepository<MessageConfigEntity>,
         @InjectRepository(SystemConfigEntity) private readonly systemConfigEntityRepository: MongoRepository<SystemConfigEntity>,
-    ) {
+        ) {
         this.init().then((res: any) => {
             this.appTaskConfig = res.systemConfig;
         }).catch((e) => {
@@ -297,122 +296,6 @@ export class TaskService {
     }
 
     /**
-     * 查询配置
-     * @param params
-     */
-    public async getAllMessageConfig(params: MessageGetDto, user: any) {
-        const queryObg: any = {};
-        if (params.status) {queryObg.status = params.status; }
-        if (params.name) {queryObg.name = params.name; }
-        if (user && user.name) {queryObg.operateUser = user.name; }
-        try {
-            const res = await this.messageConfigEntityRepository.findAndCount(queryObg);
-            return {data: res[0], count: res[1] };
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 删除配置
-     * @param params
-     */
-    public async delMessageConfig(params: Array<number | string>) {
-        try {
-            return await this.messageConfigEntityRepository.deleteMany( params);
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 编辑短信配置
-     * @param params
-     */
-    public async editMessageConfig(params: CreateMessageConfigDto) {
-        try {
-            const messageConfigOptions: CreateMessageConfigDto = params as CreateMessageConfigDto;
-            const newOptions = {...messageConfigOptions};
-            delete newOptions.id;
-            return await this.messageConfigEntityRepository.updateOne( {name: params.name }, { $set: newOptions });
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 添加短信配置
-     * @param params
-     */
-    public async addMessageConfig(params: CreateMessageConfigDto) {
-        try {
-            const messageConfigOptions: CreateMessageConfigDto = params as CreateMessageConfigDto;
-            return await this.messageConfigEntityRepository.insertOne(messageConfigOptions);
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 查询全部的邮件配置
-     * @param params
-     */
-    public async getAllEmailConfig(params: EmailGetDto, user: any) {
-        const queryObg: any = {};
-        if (params.status) {queryObg.status = params.status; }
-        if (params.name) {queryObg.name = params.name; }
-        if (user && user.name) {queryObg.operateUser = user.name; }
-        try {
-            const res = await this.emailConfigEntityRepository.findAndCount(queryObg);
-            return {data: res[0], count: res[1] };
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 删除配置文件
-     * @param params
-     */
-    public async delEmailConfig(params: Array<number | string>) {
-        try {
-            return await this.emailConfigEntityRepository.deleteMany( params);
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 更新邮件配置
-     * @param params
-     */
-    public async editEmailConfig(params: CreateEmailConfigDto) {
-        try {
-            const emailConfigOptions: EmailConfigEntity = params as EmailConfigEntity;
-            const newOptions = {...emailConfigOptions};
-            delete newOptions.id;
-            await this.emailConfigEntityRepository.findOne(params.id);
-            return await this.emailConfigEntityRepository.updateOne( {name: params.name }, { $set: newOptions });
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
-     * 添加邮件配置
-     * @param params
-     */
-    public async addEmailConfig(params: CreateEmailConfigDto) {
-        try {
-            const emailConfigOptions: EmailConfigEntity = params as EmailConfigEntity;
-            delete emailConfigOptions.id;
-            return await this.emailConfigEntityRepository.insertOne( emailConfigOptions);
-        } catch (e) {
-            throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
-        }
-    }
-
-    /**
      * 获取邮件配置
      * @param params
      */
@@ -474,5 +357,30 @@ export class TaskService {
             await this.redisCacheService.set('LIMIt_CONFIG', systemConfig)
         }
         return {systemConfig}
+    }
+
+    /**
+     * 任务日志记录
+     */
+    @From('task-kafka-emitter')
+    @On('new-kafka-task')
+    public async onSubscribeTaskLog(data: any) {
+        try {
+            const params: KafkaTaskDto = data. body
+            const taskType: number = params.taskType;
+            if (Number(taskType) === 1) {
+                try {
+                    return await this.addEmailTask(params);
+                }catch (e) {
+                    console.log(e)
+                }
+
+            }
+            if (Number(taskType) === 2) {
+                return await this.addMessageTask(params);
+            }
+        }catch (e) {
+            return null
+        }
     }
 }

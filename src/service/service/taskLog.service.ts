@@ -6,6 +6,7 @@ import {ApiException} from '../../common/error/exceptions/api.exception';
 import {ApiErrorCode} from '../../config/api-error-code.enum';
 import {CreateLogDto} from '../../model/DTO/log/CreateLogDto';
 import {LogGetDto} from '../../model/DTO/log/LogGetDto';
+import { From, On} from "nest-event";
 
 @Injectable()
 export class TaskLogService {
@@ -56,5 +57,16 @@ export class TaskLogService {
         } catch (e) {
             throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200);
         }
+    }
+
+    /**
+     * 任务日志记录
+     */
+    @From('task-log-emitter')
+    @On('record-task-log')
+    public async onSubscribeTaskLog(params: TaskLogEntity) {
+        const logOptions: TaskLogEntity = params as TaskLogEntity;
+        delete logOptions.id;
+        return await this.taskLogEntityRepository.insertOne(logOptions);
     }
 }

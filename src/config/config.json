@@ -1,25 +1,24 @@
-
 {
     "qiniuUploadConfig": {
         "accessKey": "",
         "secretKey": "",
-        "bucket": "bucket",
+        "bucket": "",
         "scope": "",
-        "expires": "3600",
+        "expires": "",
         "origin": "",
-        "persistentNotifyUrl": "http://qiniu.canyuegongzi.xyz/"
+        "persistentNotifyUrl": ""
     },
     "config": {
         "connectMicroservice": 3002,
-        "port": 10001,
+        "port": ,
         "tokenSetTimeOut": 7200,
-        "host": "http://148.70.150.131:8883",
+        "host": "",
         "globalPrefix": "simple-notice-center/v1.0"
     },
     "mysqlConfig": {
-        "host": "127.0.0.1",
-        "userName": "root",
-        "password": "123456"
+        "host": "",
+        "userName": "",
+        "password": ""
     },
     "mongodbConfig": {
         "host": "",
@@ -30,9 +29,14 @@
         "name": "task",
         "url": "127.0.0.1"
     },
+    "kafkaConfig": {
+        "url": "",
+        "clientId": "test-app-client",
+        "groupId": "test-app-group"
+    },
     "emailConfig":{
-        "authPass": "454545555",
-        "fromUser": "<1970305447@qq.com>",
-        "user": "1970305447@qq.com"
+        "authPass": "",
+        "fromUser": "",
+        "user": ""
     }
 }

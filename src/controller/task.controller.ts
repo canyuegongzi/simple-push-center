@@ -13,6 +13,8 @@ import {MessageGetDto} from '../model/DTO/config/MessageGetDto';
 import {UniqueKey} from '../model/DTO/config/UniqueKey';
 import {GetDefaultDto} from "../model/DTO/config/GetDefaultDto";
 import moment = require("moment");
+import {From, On} from "nest-event";
+import {KafkaTaskDto} from "../model/DTO/kafka/KafkaTaskDto";
 moment.locale('zh-cn')
 
 @Controller('task')
@@ -38,7 +40,7 @@ export class TaskController {
     }
 
     /**
-     * 添加邮件推送配置
+     * 添加信息推送配置
      */
     @Post('message/add')
     public async addMessageTask(@Body() params: CreateEmailTaskDto) {
@@ -72,6 +74,7 @@ export class TaskController {
             const res = await this.taskService.taskList(params);
             return  { code: 200, message: '操作成功', data: { data: res[0], count: res[1] }, success: true };
         } catch (e) {
+            console.log(e)
             return  { code: 200, message: e.errorMessage, success: false };
         }
     }
@@ -322,4 +325,5 @@ export class TaskController {
             return  { code: 200, message: e.errorMessage, success: false };
         }
     }
+
 }

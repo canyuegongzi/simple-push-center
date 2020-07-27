@@ -16,6 +16,8 @@ import {UtilService} from '../service/service/util.service';
 import {EmailConfigEntity} from '../model/mongoEntity/emailConfig.entity';
 import {MessageConfigEntity} from '../model/mongoEntity/messageConfig.entity';
 import {SystemConfigEntity} from "../model/mongoEntity/systemConfig.entity";
+import {KafkaTaskModule} from "./kafkaTask.module";
+import {TaskKafkaConsumerModule} from "./taskKafkaConsumer.module";
 
 @Module({
     imports: [
@@ -24,6 +26,8 @@ import {SystemConfigEntity} from "../model/mongoEntity/systemConfig.entity";
             {name: 'email'},
             {name: 'message'},
         ),
+        KafkaTaskModule,
+        TaskKafkaConsumerModule
     ],
     controllers: [ TaskController],
     providers: [TaskService, TaskEmitEmailService, TaskConfigService, TaskLogService, TaskEmitMessageService, RedisCacheService, UtilService, NoticeEmailProcessor, MessageEmailProcessor],
