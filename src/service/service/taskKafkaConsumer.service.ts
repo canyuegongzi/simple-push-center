@@ -15,6 +15,7 @@ export class TaskKafkaConsumerService extends AbstractKafkaConsumer {
         super();
 
     }
+    // 抽象父类必须要实现的方法   注册一个topic
     protected registerTopic() {
         this.addTopic(HELLO_FIXED_TOPIC);
         this.addTopic(TASK_PUSH_INFO);

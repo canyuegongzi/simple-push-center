@@ -360,7 +360,7 @@ export class TaskService {
     }
 
     /**
-     * 任务日志记录
+     * 任务日志记录(訂閱事件）发
      */
     @From('task-kafka-emitter')
     @On('new-kafka-task')

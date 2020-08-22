@@ -12,6 +12,8 @@ import {TaskModule} from './module/task.module';
 import {SystemConfigEntity} from "./model/mongoEntity/systemConfig.entity";
 import {EventModule} from "./module/event.module";
 import {HelpModule} from "./module/help.module";
+import {AmqpMessageModule} from "./module/amqpMessage.module";
+import {AmqpMessageConsumerModule} from "./module/amqpMessageConsumer.module";
 
 @Module({
     imports: [
@@ -34,7 +36,9 @@ import {HelpModule} from "./module/help.module";
         EventModule,
         TaskModule,
         AppKeyModule,
-        HelpModule
+        HelpModule,
+        AmqpMessageModule,
+        AmqpMessageConsumerModule
     ],
     controllers: [],
     providers: [],

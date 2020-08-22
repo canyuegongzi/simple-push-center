@@ -13,8 +13,6 @@ import {MessageGetDto} from '../model/DTO/config/MessageGetDto';
 import {UniqueKey} from '../model/DTO/config/UniqueKey';
 import {GetDefaultDto} from "../model/DTO/config/GetDefaultDto";
 import moment = require("moment");
-import {From, On} from "nest-event";
-import {KafkaTaskDto} from "../model/DTO/kafka/KafkaTaskDto";
 moment.locale('zh-cn')
 
 @Controller('task')
