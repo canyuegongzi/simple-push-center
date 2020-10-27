@@ -3,7 +3,7 @@ import {Entity, Column, PrimaryGeneratedColumn, Double, ObjectIdColumn} from 'ty
 @Entity({name: 'friend_message'})
 export class FriendMessageEntity {
   @ObjectIdColumn()
-  _id: number;
+  id: number;
 
   @Column()
   userId: string;
@@ -19,4 +19,7 @@ export class FriendMessageEntity {
 
   @Column('double')
   time: number;
+
+  @Column()
+  hashId: string;
 }

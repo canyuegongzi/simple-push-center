@@ -1,7 +1,7 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ObjectIdColumn} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, Double, ObjectIdColumn} from 'typeorm';
 
-@Entity({name: 'group_message'})
-export class GroupMessageEntity {
+@Entity({name: 'friend_message_off_line'})
+export class FriendMessageOffLineEntity {
   @ObjectIdColumn()
   id: number;
 
@@ -9,7 +9,7 @@ export class GroupMessageEntity {
   userId: string;
 
   @Column()
-  groupId: string;
+  friendId: string;
 
   @Column()
   content: string;

@@ -10,7 +10,7 @@
     },
     "config": {
         "connectMicroservice": 3002,
-        "port": 3600,
+        "port": 10001,
         "tokenSetTimeOut": 7200,
         "host": "",
         "globalPrefix": "simple-notice-center/v1.0"
@@ -31,8 +31,8 @@
     },
     "kafkaConfig": {
         "url": "",
-        "clientId": "test-app-client",
-        "groupId": "test-app-group"
+        "clientId": "",
+        "groupId": ""
     },
     "rabbitMQConfig": {
         "url": "",
@@ -41,6 +41,7 @@
         "websocketFriendMessageQueue": "websocket-friend-message-queue",
         "websocketFriendMessageExchange": "friend-message",
         "websocketGroupMessageExchange": "group-message",
+        "websocketRequestExchange": "request",
         "websocketGroupMessageSubscribe": "subscribe-gm",
         "websocketFriendMessageSubscribe": "subscribe-fm",
         "websocketGroupMessageQueue": "websocket-group-message-queue"
