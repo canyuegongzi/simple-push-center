@@ -5,5 +5,6 @@ export interface WsFriendMessageInfo {
     userId?: number | string;
     time?: number | string;
     hashId?: string;
+    status?: string;
 
 }

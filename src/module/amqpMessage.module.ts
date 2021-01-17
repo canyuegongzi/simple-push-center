@@ -5,14 +5,16 @@ import {rabbitMQConfig} from "../config/config.json"
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import {AmqpMessageConsumerService} from "../service/service/amqpMessageConsumer.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {AppKeyEntity} from "../model/mongoEntity/appKey.entity";
-import {SystemConfigEntity} from "../model/mongoEntity/systemConfig.entity";
 import {FriendMessageEntity} from "../model/mongoEntity/friendMessage.entity";
 import {GroupMessageEntity} from "../model/mongoEntity/groupMessage.entity";
 import {WebsocketMessageService} from "../service/service/websocketMessage.service";
 import {UtilService} from "../service/service/util.service";
 import {FriendMessageOffLineEntity} from "../model/mongoEntity/friendMessageOffLine.entity";
+import {WebsocketMessageController} from "../controller/websocketMessage.controller";
 
+/**
+ * websocket  消息推送模块
+ */
 @Module({
     imports: [
         TypeOrmModule.forFeature([FriendMessageEntity, GroupMessageEntity, FriendMessageOffLineEntity], 'mongoCon'),
@@ -31,10 +33,10 @@ import {FriendMessageOffLineEntity} from "../model/mongoEntity/friendMessageOffL
                     type: 'topic',
                 },
             ],
-            uri: rabbitMQConfig.url,
+            uri: rabbitMQConfig.url
         })
     ],
-    controllers: [AmqpMessageController],
+    controllers: [AmqpMessageController, WebsocketMessageController],
     providers: [AmqpMessageProductService, AmqpMessageConsumerService, WebsocketMessageService, UtilService],
     exports: [],
 })

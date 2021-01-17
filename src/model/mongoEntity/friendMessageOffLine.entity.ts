@@ -15,11 +15,14 @@ export class FriendMessageOffLineEntity {
   content: string;
 
   @Column()
-  messageType: string;
+  type: string;
 
   @Column('double')
-  time: number;
+  createTime: number;
 
   @Column()
   hashId: string;
+
+  @Column({default: '0'})
+  status: string;
 }

@@ -1,7 +1,5 @@
 import {Inject, Injectable} from '@nestjs/common';
 import moment = require('moment');
-import {KafkaPayload} from "../../common/kafka/kafka.message";
-import {Ctx, MessagePattern, Payload, RmqContext} from "@nestjs/microservices";
 import {InjectRepository} from "@nestjs/typeorm";
 import {MongoRepository} from "typeorm";
 import {FriendMessageEntity} from "../../model/mongoEntity/friendMessage.entity";
@@ -10,6 +8,7 @@ import {WsFriendMessageInfo} from "../../model/DTO/ws/WsFriendMessageInfo";
 import {ApiException} from "../../common/error/exceptions/api.exception";
 import {ApiErrorCode} from "../../config/api-error-code.enum";
 import {FriendMessageOffLineEntity} from "../../model/mongoEntity/friendMessageOffLine.entity";
+import {GetMessageQueryDto} from "../../model/DTO/message/GetMessageQueryDto";
 moment.locale('zh-cn');
 
 @Injectable()
@@ -57,6 +56,30 @@ export class WebsocketMessageService {
         }catch (e) {
             throw new ApiException(e.errorMessage, ApiErrorCode.AUTHORITY_CREATED_FILED, 200)
         }
+    }
 
+    /**
+     * 获取好友聊天记录
+     */
+    public async getFriendMessageList(messageQueryDto: GetMessageQueryDto) {
+        const pageSize = Number(messageQueryDto.pageSize);
+        const page = Number(messageQueryDto.page);
+        try {
+            return await this.friendMessageEntityRepository.findAndCount(
+                {skip: (page - 1) * pageSize,
+                    take: pageSize,
+                    order: { createTime: "DESC"},
+                    where: {
+                        userId: {
+                            $in: [messageQueryDto.friendId, messageQueryDto.userId],
+                        },
+                        friendId: {
+                            $in: [messageQueryDto.friendId, messageQueryDto.userId],
+                        },
+            }});
+        } catch (e) {
+            console.log(e);
+            throw new ApiException(e.message, ApiErrorCode.USER_LIST_FILED, 200);
+        }
     }
 }

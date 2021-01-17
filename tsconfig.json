@@ -5,7 +5,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2015",
+    "target": "es2017",
     "resolveJsonModule": true,
     "sourceMap": true,
     "outDir": "./dist",

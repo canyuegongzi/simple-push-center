@@ -22,4 +22,7 @@ export class GroupMessageEntity {
 
   @Column()
   hashId: string;
+
+  @Column({default: '0'})
+  status: string;
 }

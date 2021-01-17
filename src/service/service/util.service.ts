@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 /*import { stringify, parse} from 'uuid';*/
 import * as uuid from 'uuid';
 import jwt = require('jsonwebtoken');
-// import uuid = require("uuid");
 @Injectable()
 export class UtilService {
     constructor() {}

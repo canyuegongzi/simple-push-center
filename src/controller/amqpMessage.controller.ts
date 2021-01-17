@@ -32,9 +32,9 @@ export class AmqpMessageController {
             const messageStr: string = amqpMessageDto.userId + '_' + amqpMessageDto.friendId + '_' + currentTime;
             const hashId: string = this.utilService.createUuid(messageStr);
             // 离线库消息持久化
-            await this.websocketMessageService.friendMessageOffLinePersistence({ ...amqpMessageDto, hashId: hashId });
+            await this.websocketMessageService.friendMessageOffLinePersistence({ ...amqpMessageDto, hashId: hashId, status: 0+'' });
             // 先进行消息持久化
-            await this.websocketMessageService.friendMessagePersistence({ ...amqpMessageDto, hashId: hashId });
+            await this.websocketMessageService.friendMessagePersistence({ ...amqpMessageDto, hashId: hashId, status: 0+'' });
             console.log('消息持久化成功');
             // 广播消息
             await this.amqpMessageProductService.sendFriendMessage({ ...amqpMessageDto, hashId: hashId });

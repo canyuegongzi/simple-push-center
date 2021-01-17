@@ -4,6 +4,8 @@ moment.locale('zh-cn')
 import {AmqpConnection, RabbitRPC} from "@golevelup/nestjs-rabbitmq";
 import {rabbitMQConfig} from "../../config/config.json";
 import {RequestAddFriendDto} from "../../model/DTO/friend/requestAddFriend.dto";
+import {WsFriendMessageInfo} from "../../model/DTO/ws/WsFriendMessageInfo";
+import {AffirmChatMessageDto} from "../../model/DTO/message/AffirmChatMessageDto";
 
 @Injectable()
 export class AmqpMessageProductService{
@@ -12,9 +14,9 @@ export class AmqpMessageProductService{
     ) {}
 
     /**
-     * 发送消息
+     * 向全部微服务广播好友消息
      */
-    public async sendFriendMessage(data: any) {
+    public async sendFriendMessage(data: WsFriendMessageInfo) {
         return new Promise((async (resolve, reject) => {
             try {
                 await this.messageClient.publish(rabbitMQConfig.websocketFriendMessageSubscribe, 'friend-route', JSON.stringify(data));
@@ -29,7 +31,7 @@ export class AmqpMessageProductService{
     /**
      * 发送消息
      */
-    public async sendGroupMessage(data: any) {
+    public async sendGroupMessage(data: WsFriendMessageInfo) {
         return new Promise((async (resolve, reject) => {
             try {
                 await this.messageClient.publish(rabbitMQConfig.websocketGroupMessageSubscribe, 'subscribe-group-route', JSON.stringify(data));
@@ -46,8 +48,22 @@ export class AmqpMessageProductService{
      * @param amqpMessageDto
      */
     public async newRequest(data: RequestAddFriendDto) {
-        console.log('有一个新的请求了');
-        console.log(data);
+        return new Promise((async (resolve, reject) => {
+            try {
+                await this.messageClient.publish(rabbitMQConfig.websocketRequestExchange, 'new-request', JSON.stringify(data));
+                resolve({success: true, data: data})
+            }catch (e) {
+                console.log(e);
+                reject({ success:false, e})
+            }
+        }))
+    }
+
+    /**
+     * 聊天消息状态确认
+     * @param data<AffirmChatMessageDto> 消息源数据
+     */
+    public async affirmChatMessage(data: AffirmChatMessageDto) {
         return new Promise((async (resolve, reject) => {
             try {
                 await this.messageClient.publish(rabbitMQConfig.websocketRequestExchange, 'new-request', JSON.stringify(data));

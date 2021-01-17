@@ -2,7 +2,7 @@
     "qiniuUploadConfig": {
         "accessKey": "",
         "secretKey": "",
-        "bucket": "bucket",
+        "bucket": "",
         "scope": "",
         "expires": "3600",
         "origin": "",
