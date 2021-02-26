@@ -1,5 +1,5 @@
 import {IsNotEmpty} from 'class-validator';
-import {ApiErrorCode} from '../../../config/api-error-code.enum';
+import {ApiErrorCode} from '../../../config/ApiErrorCodeEnum';
 import {Column, ObjectIdColumn} from 'typeorm';
 
 export class KafkaTaskDto {

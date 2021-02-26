@@ -1,24 +1,10 @@
 {
-    "qiniuUploadConfig": {
-        "accessKey": "",
-        "secretKey": "",
-        "bucket": "",
-        "scope": "",
-        "expires": "3600",
-        "origin": "",
-        "persistentNotifyUrl": ""
-    },
     "config": {
         "connectMicroservice": 3002,
         "port": 10001,
         "tokenSetTimeOut": 7200,
         "host": "",
         "globalPrefix": "simple-notice-center/v1.0"
-    },
-    "mysqlConfig": {
-        "host": "127.0.0.1",
-        "userName": "root",
-        "password": "123456"
     },
     "mongodbConfig": {
         "host": "",
@@ -31,20 +17,8 @@
     },
     "kafkaConfig": {
         "url": "",
-        "clientId": "",
-        "groupId": ""
-    },
-    "rabbitMQConfig": {
-        "url": "",
-        "name": "MESSAGE_SERVICE",
-        "queue": "message_queue",
-        "websocketFriendMessageQueue": "websocket-friend-message-queue",
-        "websocketFriendMessageExchange": "friend-message",
-        "websocketGroupMessageExchange": "group-message",
-        "websocketRequestExchange": "request",
-        "websocketGroupMessageSubscribe": "subscribe-gm",
-        "websocketFriendMessageSubscribe": "subscribe-fm",
-        "websocketGroupMessageQueue": "websocket-group-message-queue"
+        "clientId": "test-app-client",
+        "groupId": "test-app-group"
     },
     "emailConfig":{
         "authPass": "",

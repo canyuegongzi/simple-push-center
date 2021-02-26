@@ -1,5 +1,5 @@
 import {IsNotEmpty} from 'class-validator';
-import {ApiErrorCode} from '../../../config/api-error-code.enum';
+import {ApiErrorCode} from '../../../config/ApiErrorCodeEnum';
 
 export class CreateAppKeyDto {
 
@@ -18,7 +18,7 @@ export class CreateAppKeyDto {
 
     @IsNotEmpty({ message: '过期时间不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })
     expiresTime?: string;
-    
+
     @IsNotEmpty({ message: 'secret不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })
     secret: string;
 }

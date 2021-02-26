@@ -51,7 +51,7 @@ const decrypt = (data, key) => {
 }
 const test = '测试加密信息'
 // 加密
-const crypted = encrypt(test, keys.pubKey); 
+const crypted = encrypt(test, keys.pubKey);
  // 解密
 const decrypted = decrypt(crypted, keys.privKey);
 
@@ -126,7 +126,7 @@ export class TaskService {
 }
 
 ```
-* 任务周期处理函数（email.processor.ts)
+* 任务周期处理函数（NoticeEmailProcessor.ts)
 bull周期处理函数可参考https://github.com/OptimalBits/bull官方文档
 ```
 @Injectable()
@@ -143,14 +143,14 @@ export class NoticeEmailProcessor {
 
     @Process('emitEmail')
     public async handleTranscode(job: Job) {
-     
+
     }
 
     /**
      * 下一步执行任务()
      */
     protected async nextLoopTak(task: TaskEntity, isSuccessFlag: boolean, status: number) {
-       
+
     }
 }
 ```

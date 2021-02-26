@@ -1,5 +1,5 @@
 import {IsNotEmpty} from 'class-validator';
-import {ApiErrorCode} from '../../../config/api-error-code.enum';
+import {ApiErrorCode} from '../../../config/ApiErrorCodeEnum';
 
 export class CreateMessageConfigDto {
     @IsNotEmpty({ message: 'name不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })
@@ -17,7 +17,7 @@ export class CreateMessageConfigDto {
 
     @IsNotEmpty({ message: 'signName不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })
     signName: string;
-    
+
     @IsNotEmpty({ message: '参数说明不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })
     paramsNote: string;
 

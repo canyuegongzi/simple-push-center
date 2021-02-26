@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import 'reflect-metadata';
-import { AppModule } from './app.module';
+import { AppModule } from './AppModule';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
-import { HttpExceptionFilter } from './common/error/filters/http-exception.filter';
-import { ApiParamsValidationPipe } from './common/error/pipe/api-params-validation.pipe';
+import { HttpExceptionFilter } from './common/error/filters/HttpExceptionFilter';
+import { ApiParamsValidationPipe } from './common/error/pipe/ApiParamsValidationPipe';
 import { config } from './config/config.json';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
