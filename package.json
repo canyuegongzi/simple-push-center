@@ -56,7 +56,7 @@
     "nest-event": "^1.0.8",
     "nest-schedule": "^0.6.4",
     "nestjs-redis": "^1.2.8",
-    "nodemailer": "^6.4.8",
+    "nodemailer": "^6.4.16",
     "passport": "^0.4.1",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "^4.0.0",
