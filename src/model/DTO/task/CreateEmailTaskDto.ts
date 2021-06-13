@@ -3,7 +3,6 @@ import {ApiErrorCode} from '../../../config/ApiErrorCodeEnum';
 import {Type} from "class-transformer";
 
 export class CreateEmailTaskDto {
-    @IsNotEmpty({ message: 'operateUser不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })
     operateUser: string;
 
     @IsNotEmpty({ message: 'executeType不能为空', context: { errorCode: ApiErrorCode.USER_NAME_STRING } })

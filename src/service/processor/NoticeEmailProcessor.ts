@@ -45,16 +45,15 @@ export class NoticeEmailProcessor  extends EventEmitter {
             emailConfig = await this.taskService.getEmailConfigInfo(task.taskConfig);
             console.log(emailConfig);
             // executeCount (已经执行的次数) 大于 任务的执行次数   executeType 执行类型，1： 单次 2：status 执行完成
-            if (task.executeCount >= task.maxExecuteCount || (task.executeType === 1 && task.status === 2) || (task.executeType === 2 && task.status >= 2)) {
-                // 满足条件时任务已经完整执行完毕
-                return;
-            }
+            if (task.executeCount >= task.maxExecuteCount || (task.executeType === 1 && task.status === 2) || (task.executeType === 2 && task.status >= 2)) { return; }
             try {
                 transport = await this.taskEmitEmailService.createTransport({port: emailConfig.port, host: emailConfig.host? emailConfig.host : '', secureConnection: emailConfig.secure, service: emailConfig.service, auth: {user: emailConfig.authUser, pass: emailConfig.authPass}});
             } catch (e) {
+                console.log(e);
                 errMessage = '传输器构建失败';
             }
         } catch (e) {
+            console.log(e);
             status = 3;
             errMessage = '任务查询失败或获取配置失败';
         }

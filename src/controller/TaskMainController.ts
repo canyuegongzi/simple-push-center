@@ -10,6 +10,7 @@ import {TaskGetDto} from "../model/DTO/task/TaskGetDto";
 import {TaskLogService} from "../service/service/TaskLogService";
 import {LogGetDto} from "../model/DTO/log/LogGetDto";
 import {CancleEmailTaskDto} from "../model/DTO/task/CancleEmailTaskDto";
+import {CreateMessageConfigDto} from "../model/DTO/config/CreateMessageConfigDto";
 moment.locale('zh-cn')
 
 @Controller('task')
@@ -57,10 +58,15 @@ export class TaskMainController {
     /**
      * 邮件推送配置新增
      * @param params<CreateEmailTaskDto>
+     * @param token
      */
     @Post('email/add')
-    public async addEmailTask(@Body() params: CreateEmailTaskDto): Promise<ResultData> {
+    public async addEmailTask(@Body() params: CreateEmailTaskDto, @Headers('token') token: string): Promise<ResultData> {
         try {
+            const user: Record<string, any> = await this.utilService.getUser(token);
+            if (user) {
+                params.operateUser = user.name;
+            }
             await this.taskMainService.addEmailTask(params);
             return new ResultData(MessageType.GETLIST, params, true);
         } catch (e) {
@@ -72,10 +78,15 @@ export class TaskMainController {
     /**
      * 短信推送配置新增
      * @param params<CreateEmailTaskDto>
+     * @param token
      */
     @Post('message/add')
-    public async addMessageTask(@Body() params: CreateEmailTaskDto): Promise<ResultData> {
+    public async addMessageTask(@Body() params: CreateEmailTaskDto, @Headers('token') token: string): Promise<ResultData> {
         try {
+            const user: Record<string, any> = await this.utilService.getUser(token);
+            if (user) {
+                params.operateUser = user.name;
+            }
             await this.taskMainService.addMessageTask(params);
             return new ResultData(MessageType.GETLIST, params, true);
         } catch (e) {
