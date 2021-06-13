@@ -1,0 +1,35 @@
+serverConfig:
+  connectMicroservice: 3001
+  port: 10001
+  tokenSetTimeOut: 7200
+  globalPrefix: 'simple-push-center/v1.1'
+mysqlConfig:
+  host: '127.0.0.1'
+  userName: 'root'
+  password: '123456'
+  dataBaseName: 'b_simple-push-center_v1.1'
+  port: 3306
+mongodbConfig:
+  host: '127.0.0.1'
+  userName: 'root'
+  port: 7000
+  dataBaseName: 'simple-push-center'
+  password: '123456'
+  authSource: 'admin'
+redisConfig:
+  name: 'user_token'
+  url: '127.0.0.1:6379'
+  host: '127.0.0.1'
+  port: 6379
+kafkaConfig:
+  url: '127.0.0.1:19092'
+  clientId: 'push-app-client'
+  groupId: 'push-app-group'
+rabbitMQConfig:
+    url: ''
+    name: 'MESSAGE_SERVICE'
+    queue: 'message_queue'
+emailConfig:
+   authPass: ''
+   fromUser: ''
+   user: ''

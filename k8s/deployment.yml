@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: simple-push-center-server
+  name: simple-push-center-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-push-center-server
+  template:
+    metadata:
+      labels:
+        app: simple-push-center-server
+    spec:
+      containers:
+          - env:
+              - name: MYSQL
+                value: "127.0.0.4"
+              - name: MYSQL_PASSWORD
+                value: "123456"
+              - name: MYSQL_PORT
+                value: '3306'
+              - name: MYSQL_USER
+                value: root
+              - name: MYSQL_DATABASE_NAME
+                value: b_simple-push-center_v1.1
+              - name: REDIS
+                value: '127.0.0.1:6379'
+              - name: REDIS_NAME
+                value: 'user_token'
+              - name: REDIS_POST
+                value: '6379'
+              - name: KAfKA
+                value: '1127.0.0.1:19092'
+              - name: REDIS_PASSWORD
+                value: '123456'
+            image: canyuegongzi/simple-push-center-server:2.8
+            imagePullPolicy: IfNotPresent
+            name: simple-push-center-server
+            ports:
+              - containerPort: 10001

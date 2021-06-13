@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: simple-push-center-server
+  name: simple-push-center-server-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: simple-push-center-server-port
+      port: 10001
+      protocol: TCP
+      targetPort: 10001
+  selector:
+    app: simple-push-center-server

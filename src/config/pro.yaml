@@ -1,0 +1,36 @@
+serverConfig:
+  connectMicroservice: 3001
+  port: 10001
+  tokenSetTimeOut: 7200
+  globalPrefix: 'simple-push-center/v1.1'
+mysqlConfig:
+  host: ''
+  userName: ''
+  password: ''
+  dataBaseName: ''
+  port: 7000
+mongodbConfig:
+  host: ''
+  userName: ''
+  port: 27017
+  dataBaseName: ''
+  password: ''
+  authSource: 'admin'
+redisConfig:
+  name: 'user_token'
+  url: ''
+  host: ''
+  port: ''
+  password: ''
+kafkaConfig:
+  url: ''
+  clientId: 'test-app-client'
+  groupId: 'test-app-group'
+rabbitMQConfig:
+  url: ''
+  name: 'MESSAGE_SERVICE'
+  queue: 'message_queue'
+emailConfig:
+  authPass: ''
+  fromUser: ''
+  user: ''
