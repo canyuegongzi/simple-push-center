@@ -76,7 +76,7 @@
     "yaml": "latest"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.0.0",
+    "@nestjs/cli": "^9.2.0",
     "@nestjs/microservices": "^7.1.3",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/swagger": "^4.5.10",
